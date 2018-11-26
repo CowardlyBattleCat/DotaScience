@@ -1,1 +1,1 @@
-# dota_magic
+# DotaScience
