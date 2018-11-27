@@ -18,3 +18,10 @@ def get_match_data(match_id: int, api_key: str=api_key) -> dict:
     params = {'api_key': api_key}
     response = requests.get(url, params=params)
     return response.json()
+
+def get_hero_data(api_key: str=api_key) -> dict:
+    """Retrieve data for heroes from the OpenDota api."""
+    url = 'https://api.opendota.com/api/heroes'
+    params = {'api_key': api_key}
+    response = requests.get(url, params=params)
+    return response.json()
