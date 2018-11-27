@@ -14,7 +14,7 @@ api_key = get_api_key()
 
 def get_match_data(match_id: int, api_key: str=api_key) -> dict:
     """Retrieve data for specfied match from the OpenDota api."""
-    url = 'https://api.opendota.com/api/matches/271145478'
+    url = 'https://api.opendota.com/api/matches/' + str(match_id)
     params = {'api_key': api_key}
     response = requests.get(url, params=params)
     return response.json()
