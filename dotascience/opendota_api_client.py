@@ -1,5 +1,6 @@
 import os
 import requests
+from typing import List, Dict, Any
 
 default_secrets_path = os.path.join(os.environ['HOME'],
                                     '.secrets/opendota_api_key')
@@ -19,7 +20,7 @@ def get_match_data(match_id: int, api_key: str=api_key) -> dict:
     response = requests.get(url, params=params)
     return response.json()
 
-def get_hero_data(api_key: str=api_key) -> dict:
+def get_hero_data(api_key: str=api_key) -> List[dict]:
     """Retrieve data for heroes from the OpenDota api."""
     url = 'https://api.opendota.com/api/heroes'
     params = {'api_key': api_key}
