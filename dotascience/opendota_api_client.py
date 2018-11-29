@@ -20,20 +20,34 @@ def get_hero_data(api_key: str=api_key) -> List[dict]:
     response = requests.get(url, params=params)
     return response.json()
 
+def get_pro_match_stubs(less_than_match_id: int,
+                        api_key: str=api_key) -> List[dict]:
+    """Retrieve data stubs for pro matches with match ids smaller than
+    less_than_match_id from the OpenDota api. The api seems to return 100 stubs
+    at a time by default.
+    """
+    url = 'https://api.opendota.com/api/proMatches'
+    params = {'api_key': api_key, 'less_than_match_id': less_than_match_id}
+    response = requests.get(url, params=params)
+    return response.json()
+
+def accumulate_pro_match_stubs(less_than_match_id: int, end_match_id: int,
+                               api_key: str=api_key) -> List[dict]:
+    """Call get_pro_match_stubs repeatedly and combine results until the last
+    match_id returned is smaller than end_match_id.
+    """
+    pro_match_stubs = []
+    lowest_match_id = less_than_match_id
+    while lowest_match_id >= end_match_id:
+        stubs = get_pro_match_stubs(lowest_match_id, api_key)
+        pro_match_stubs.extend(stubs)
+        lowest_match_id = stubs[-1]['match_id']
+    return pro_match_stubs
+
 def get_match_data(match_id: int, api_key: str=api_key) -> dict:
     """Retrieve data for specfied match from the OpenDota api."""
     url = 'https://api.opendota.com/api/matches/' + str(match_id)
     params = {'api_key': api_key}
-    response = requests.get(url, params=params)
-    return response.json()
-
-def get_pro_match_stubs(less_than_match_id: int,
-                        api_key: str=api_key) -> List[dict]:
-    """Retrieve data stubs for pro matches with match ids smaller than
-    less_than_match_id from the OpenDota api.
-    """
-    url = 'https://api.opendota.com/api/proMatches'
-    params = {'api_key': api_key, 'less_than_match_id': less_than_match_id}
     response = requests.get(url, params=params)
     return response.json()
 
