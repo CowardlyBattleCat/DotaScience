@@ -1,6 +1,8 @@
 import os
 import requests
-from typing import List, Dict, Any
+from typing import List, Dict, Any, Optional
+from json import JSONDecodeError
+
 
 default_secrets_path = os.path.join(os.environ['HOME'],
                                     '.secrets/opendota_api_key')
@@ -13,7 +15,7 @@ def get_api_key(filename: str=default_secrets_path) -> str:
 
 api_key = get_api_key()
 
-def get_hero_data(api_key: str=api_key) -> List[dict]:
+def get_hero_data(api_key: str=api_key) -> List[Dict]:
     """Retrieve data for heroes from the OpenDota api."""
     url = 'https://api.opendota.com/api/heroes'
     params = {'api_key': api_key}
@@ -21,7 +23,7 @@ def get_hero_data(api_key: str=api_key) -> List[dict]:
     return response.json()
 
 def get_pro_match_stubs(less_than_match_id: int,
-                        api_key: str=api_key) -> List[dict]:
+                        api_key: str=api_key) -> List[Dict]:
     """Retrieve data stubs for pro matches with match ids smaller than
     less_than_match_id from the OpenDota api. The api seems to return 100 stubs
     at a time by default.
@@ -32,7 +34,7 @@ def get_pro_match_stubs(less_than_match_id: int,
     return response.json()
 
 def accumulate_pro_match_stubs(less_than_match_id: int, end_match_id: int,
-                               api_key: str=api_key) -> List[dict]:
+                               api_key: str=api_key) -> List[Dict]:
     """Call get_pro_match_stubs repeatedly and combine results until the last
     match_id returned is smaller than end_match_id.
     """
@@ -42,18 +44,23 @@ def accumulate_pro_match_stubs(less_than_match_id: int, end_match_id: int,
         stubs = get_pro_match_stubs(lowest_match_id, api_key)
         pro_match_stubs.extend(stubs)
         lowest_match_id = stubs[-1]['match_id']
+        print(lowest_match_id)
     return pro_match_stubs
 
-def get_match_data(match_id: int, api_key: str=api_key) -> dict:
+def get_match_data(match_id: int, api_key: str=api_key) -> Optional[Dict]:
     """Retrieve data for specfied match from the OpenDota api."""
     url = 'https://api.opendota.com/api/matches/' + str(match_id)
     params = {'api_key': api_key}
     response = requests.get(url, params=params)
-    return response.json()
+    try:
+        return response.json()
+    except JSONDecodeError:
+        return None
 
-def get_bulk_match_data(match_ids: List[int]) -> List[dict]:
+def get_bulk_match_data(match_ids: List[int]) -> List[Dict]:
     bulk_match_data = []
     for match_id in match_ids:
-        bulk_match_data.append(get_match_data(match_id))
-        print(match_id)
+        if match_id != None
+            bulk_match_data.append(get_match_data(match_id))
+            print(match_id)
     return bulk_match_data
