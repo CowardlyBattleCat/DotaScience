@@ -1,3 +1,5 @@
+# TODO finish and fix type annotations
+
 import csv
 import json
 from typing import List, Dict, Any, Optional
