@@ -3,6 +3,7 @@
 import csv
 import json
 from typing import List, Dict, Any, Optional
+from dotascience.transformers import get_patch
 
 def save_as_csv(data: List[int], filename_path: str):
     """Save data as a .csv file of integers using the given filename path,
@@ -45,3 +46,12 @@ def find_index(match_list: List[int], match_id: int):
     for i, match in enumerate(match_list):
         if match == match_id:
             return (i, match)
+
+def check_match_list(bulk_match_data):
+    """Call utility.get_patch for each match in list.
+    Return list of tuples (match_id, patch)
+    """
+    match_patch = []
+    for match in bulk_match_data:
+        match_patch.append(get_patch(match))
+    return match_patch
