@@ -1,6 +1,6 @@
 # TODO finish and fix type annotations
 
-from typing import List, Dict, Any
+from typing import List, Dict, Any, Tuple
 
 
 def get_match_ids(pro_match_data: List[dict]) -> List[int]:
