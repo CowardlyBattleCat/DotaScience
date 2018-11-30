@@ -1,3 +1,5 @@
+import csv
+import json
 from typing import List, Dict, Any, Optional
 
 def save_as_csv(data: List[int], filename_path: str):
@@ -14,10 +16,11 @@ def load_csv(filename_path: str) -> List:
     """Load .csv file of integers as a list of integers using specfied path."""
     with open(filename_path, newline='') as f:
         reader = csv.reader(f)
-        test_list = []
+        csv_list = []
         for row in reader:
             row = [int(x) for x in row]
-            test_list.extend(row)
+            csv_list.extend(row)
+        return csv_list
 
 def save_as_json(data, filename_path: str):
     """Save data as a .json file using the given filename path, adding .json
