@@ -61,7 +61,7 @@ def get_bulk_match_data(match_ids: List[int]) -> List[Dict]:
     """Aggregate match data corresponding to a list of match ids."""
     bulk_match_data = []
     for match_id in match_ids:
-        if match_id != None
+        if match_id != None:
             bulk_match_data.append(get_match_data(match_id))
             print(match_id)
     return bulk_match_data
