@@ -82,6 +82,10 @@ def make_list_dummies(df, column: str):
     return dummies_df
 
 def merge_hero_dummies(main_df, dummy_dfs, cols_to_drop=None):
+    """Consume a main df, a list of dummy dfs, and a list of columns to drop.
+    Return a single df inner merged on left index and right index and missing
+    the specified columns.
+    """
     builder_df = main_df.copy()
     for df in dummy_dfs:
         builder_df = pd.merge(left=builder_df, right=df,
