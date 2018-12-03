@@ -64,6 +64,13 @@ def clean_df(df, column: str):
     return df.drop(labels=column, axis=1)
 
 def make_list_dummies(df, column: str):
+    """Consume a dataframe and categorical column with lists of levels as row
+    values.
+    Return a dataframe with each unique level as its own dummy variable.
+    Dummy column names have original column name separated from level names
+    with __ (double underscore) and spaces in level names replaced with _
+    (single underscore).
+    """
     dummies_df = pd.DataFrame(df[column].copy())
     for level in make_unique_list(dummies_df[column]):
         new_col_name = f'{column}__{level.replace(" ", "_")}'
