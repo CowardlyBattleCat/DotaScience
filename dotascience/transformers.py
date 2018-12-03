@@ -80,3 +80,12 @@ def make_list_dummies(df, column: str):
             lambda col: is_level_in_col(col, level))
     dummies_df = clean_df(df=dummies_df, column=column)
     return dummies_df
+
+def merge_hero_dummies(main_df, dummy_dfs, cols_to_drop=None):
+    builder_df = main_df.copy()
+    for df in dummy_dfs:
+        builder_df = pd.merge(left=builder_df, right=df,
+                              left_index=True, right_index=True)
+    if cols_to_drop is not None:
+        builder_df.drop(columns=cols_to_drop, inplace=True)
+    return builder_df
