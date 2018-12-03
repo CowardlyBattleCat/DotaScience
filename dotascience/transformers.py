@@ -1,6 +1,7 @@
 # TODO finish and fix type annotations
 # TODO change DummyMaker behavior wrt hyphens and underscores (for consistency)
 
+import pandas as pd
 from typing import List, Dict, Any, Tuple
 
 
