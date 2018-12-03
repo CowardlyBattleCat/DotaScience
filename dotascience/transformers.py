@@ -60,14 +60,14 @@ def is_level_in_col(column, level):
         return 0
 
 def clean_df(df, column: str):
-    """"""
+    """Drop original column from df with newly created dummy columns."""
     return df.drop(labels=column, axis=1)
 
 def make_list_dummies(df, column: str):
     dummies_df = pd.DataFrame(df[column].copy())
     for level in make_unique_list(dummies_df[column]):
-        dummies_df[f'{column}_{level.replace(" ", "-")}'] = dummies_df[column].apply(
-            lambda col: is_level_in_col(col, level)
-        )
+        new_col_name = f'{column}__{level.replace(" ", "_")}'
+        dummies_df[new_col_name] = dummies_df[column].apply(
+            lambda col: is_level_in_col(col, level))
     dummies_df = clean_df(df=dummies_df, column=column)
     return dummies_df
