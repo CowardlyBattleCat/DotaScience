@@ -1,4 +1,5 @@
 # TODO finish and fix type annotations
+# TODO fix csv functions so they work properly with dataframes.
 
 import csv
 import json
