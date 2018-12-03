@@ -78,6 +78,5 @@ def make_list_dummies(df, column: str):
         new_col_name = f'{column}__{level.replace(" ", "_")}'
         dummies_df[new_col_name] = dummies_df[column].apply(
             lambda col: is_level_in_col(col, level))
-#    attempting to help merge by preserving original column
-#    dummies_df = clean_df(df=dummies_df, column=column)
+    dummies_df = clean_df(df=dummies_df, column=column)
     return dummies_df
