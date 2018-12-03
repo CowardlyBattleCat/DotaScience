@@ -1,6 +1,9 @@
 import numpy as np
 import pandas as pd
 
+# This version of DummyMaker uses __ between the prefix and level name and
+# replaces spaces in the level name with _ . This will not be consistent with
+# the data-tools version of DummyMaker until I make that module pip installable.
 
 class DummyMaker:
     """Class takes a categorical variable and returns a DataFrame with a column
@@ -14,7 +17,7 @@ class DummyMaker:
         if prefix is None:
             self.prefix = ""
         else:
-            self.prefix = prefix + "_"
+            self.prefix = prefix + "__"
         self.colnames = None
 
     def fit(self, categorical_column):
@@ -24,7 +27,7 @@ class DummyMaker:
         """
         unique_cats = np.unique(categorical_column)
         self.levels = unique_cats
-        self.colnames = [self.prefix + level.replace(" ", "-")
+        self.colnames = [self.prefix + level.replace(" ", "_")
                          for level in self.levels]
 
     def transform(self, categorical_column, k_minus_one=False):
