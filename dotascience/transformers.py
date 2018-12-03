@@ -48,7 +48,10 @@ def make_unique_list(column):
     return unique_levels
 
 def is_level_in_col(column, level):
-    """"""
+    """For a single row:
+    Return 1 if the level is present in the column.
+    Return 0 if the level is not present in the column.
+    """
     if type(column) != list:
         return 0
     elif level in column:
