@@ -1,5 +1,5 @@
 # TODO finish and fix type annotations
-# TODO fix csv functions so they work properly with dataframes.
+# TODO consider writing wrappers for default df csv read/write functions.
 
 import csv
 import json
