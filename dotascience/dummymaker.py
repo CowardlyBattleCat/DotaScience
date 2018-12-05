@@ -1,9 +1,10 @@
 import numpy as np
 import pandas as pd
 
-# This version of DummyMaker uses __ between the prefix and level name and
-# replaces spaces in the level name with _ . This will not be consistent with
-# the data-tools version of DummyMaker until I make that module pip installable.
+# This version of DummyMaker now uses '__' between the prefix and level name
+# and replaces spaces in the level name with '_'. This is consistent with
+# the data-tools version of DummyMaker. Once I make that module pip
+# installable, this copy will be replaced.
 
 class DummyMaker:
     """Class takes a categorical variable and returns a DataFrame with a column
