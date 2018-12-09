@@ -153,7 +153,7 @@ def assign_picks_bans(one_match):
                 one_match[f'radiant_pick__{hero_id}'] = 1
             else:
                 one_match[f'dire_pick__{hero_id}'] = 1
-        if pick_ban['is_pick'] == False:
+        elif pick_ban['is_pick'] == False:
             hero_id = pick_ban['hero_id']
             if pick_ban['team'] == 0:
                 one_match[f'radiant_ban__{hero_id}'] = 1
@@ -163,7 +163,8 @@ def assign_picks_bans(one_match):
 
 def create_hero_pick_ban_dummies(match_data_df, col_names):
     """Consume a dataframe of matches with draft data and target label.
-    Return a new dataframe with a dummy column for each of the 232 side + hero pick combinations.
+    Return a new dataframe with a dummy column for each of the 464
+    combinations of side + pick + pick/ban.
     """
     new_df = add_new_zero_cols(match_data_df, col_names)
     for match in match_data_df.index:
@@ -171,3 +172,12 @@ def create_hero_pick_ban_dummies(match_data_df, col_names):
         new_df.loc[match] = assign_picks_bans(row)
     new_df.drop(columns='picks_bans', inplace=True)
     return new_df
+
+def make_hero_category_col_names(hero_categories: List[str]) -> List[str]:
+        hero_category_col_names = []
+        sides = ['radiant', 'dire']
+        for side in sides:
+            for hero_category in hero_categories:
+                side_category_num = f'{side}_heroes__{hero_category}'
+                hero_category_col_names.append(side_category_num)
+        return hero_category_col_names
