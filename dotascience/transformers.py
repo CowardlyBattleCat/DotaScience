@@ -104,3 +104,13 @@ def sum_rows_with_nulls(match_df):
     """
     null_columns = match_df.columns[match_df.isnull().any()]
     return match_df[null_columns].isnull().sum()
+
+def remove_rows_with_nulls(match_df, cols_with_nuls):
+    """Consume a dataframe of matches and a list of columns having null rows.
+    Return a new data frame having dropped null rows from those columns.
+    """
+    dropped_nulls_match_df = match_df.copy()
+    for col in cols_with_nuls:
+        dropped_nulls_match_df = dropped_nulls_match_df[
+            ~dropped_nulls_match_df[col].isnull()]
+    return dropped_nulls_match_df
