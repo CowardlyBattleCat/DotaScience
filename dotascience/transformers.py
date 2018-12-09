@@ -114,3 +114,16 @@ def remove_rows_with_nulls(match_df, cols_with_nuls):
         dropped_nulls_match_df = dropped_nulls_match_df[
             ~dropped_nulls_match_df[col].isnull()]
     return dropped_nulls_match_df
+
+def make_hero_pick_col_names(full_hero_data_df) -> List[str]:
+    """Consume a dataframe of hero data a list of strings with hero pick
+    columns for each side.
+    """
+    hero_ids = list(full_hero_data_df.index.values)
+    hero_pick_col_names = []
+    sides = ['radiant', 'dire']
+    for side in sides:
+        for hero_id in hero_ids:
+            side_hero_pick = f'{side}_pick__{hero_id}'
+            hero_pick_col_names.append(side_hero_pick)
+    return hero_pick_col_names
