@@ -174,10 +174,49 @@ def create_hero_pick_ban_dummies(match_data_df, col_names):
     return new_df
 
 def make_hero_category_col_names(hero_categories: List[str]) -> List[str]:
-        hero_category_col_names = []
-        sides = ['radiant', 'dire']
-        for side in sides:
-            for hero_category in hero_categories:
-                side_category_num = f'{side}_heroes__{hero_category}'
-                hero_category_col_names.append(side_category_num)
-        return hero_category_col_names
+    """Consume a list of hero categories and return a list of combinations of
+    side + category column names.
+    """
+    hero_category_col_names = []
+    sides = ['radiant', 'dire']
+    for side in sides:
+        for hero_category in hero_categories:
+            side_category_num = f'{side}_heroes__{hero_category}'
+            hero_category_col_names.append(side_category_num)
+    return hero_category_col_names
+
+def assign_sums(match_data_df, hero_data_df):
+    """Consume a dataframe of matches with dummy columns for picks and bans and
+    empty columns for team category sums. Consume a dataframe of hero data with
+    dummy columns for each category. Return the dataframe with empty columns
+    populated.
+    """
+    # Get shape of hero category data
+    category_cols = [col for col in list(hero_data_df) if (
+        (col[:13] == 'attack_type__') or
+        (col[:14] == 'primary_attr__') or
+        (col[:7] == 'roles__'))]
+    hero_roles_shape = hero_data_df[category_cols].shape
+    # Create array of hero category data, transposed and reshaped as (n_categories, 1, n_heroes) to allow broadcasting.
+    trans_hero_roles_ar = hero_data_df[category_cols].T.values
+    reshaped_hero_roles_ar = trans_hero_roles_ar.reshape((hero_roles_shape[1], 1, hero_roles_shape[0]))
+    # Create list of match data columns to make sub lists
+    match_cols = list(match_data_df)
+    sides = ['radiant', 'dire']
+    for side in sides:
+        side_pick_cols = [col for col in match_cols if col[:(len(side) + 7)] == f'{side}_pick__']
+        side_picks_ar = match_data_df[side_pick_cols].values
+        roles_rows_heroes_ar = (reshaped_hero_roles_ar * side_picks_ar)
+        side_roles_ar = np.transpose(np.sum(roles_rows_heroes_ar, axis=2))
+        side_sum_cols = [col for col in match_cols if col[:(len(side) + 9)] == f'{side}_heroes__']
+        match_data_df[side_sum_cols] += side_roles_ar
+    return match_data_df
+
+def create_hero_category_sum_cols(match_data_df, hero_data_df, col_names):
+    """Consume a dataframe of matches which must already have hero pick and ban dummy columns.
+    Consume a list of hero category column names and a dataframe of heroes with dummy columns for each category.
+    Return a new dataframe with a populated sum column for each of the 28 side + category combinations.
+    """
+    new_df = add_new_zero_cols(match_data_df, col_names)
+    new_df = assign_sums(new_df, hero_data_df)
+    return new_df
