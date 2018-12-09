@@ -1,6 +1,7 @@
 # TODO finish and fix type annotations
 
 import pandas as pd
+import numpy as np
 from typing import List, Dict, Any, Tuple
 
 
@@ -135,3 +136,35 @@ def make_hero_pick_ban_col_names(full_hero_data_df,
                 side_hero_choice = f'{side}_{type}__{hero_id}'
                 hero_pick_ban_col_names.append(side_hero_choice)
     return hero_pick_ban_col_names
+
+def add_new_zero_cols(match_data_df, col_names):
+    """Consume a dataframe of match data and a list of column names.
+    Return a new dataframe with columns of zeroes for each col in col_names.
+    """
+    n_rows = len(match_data_df)
+    n_cols = len(col_names)
+    zero_array = np.zeros(shape=(n_rows, n_cols), dtype=int)
+    empty_df = pd.DataFrame(zero_array, index=match_data_df.index, columns=col_names)
+    extended_match_df = pd.merge(match_data_df, empty_df, left_index=True, right_index=True)
+    return extended_match_df
+
+def assign_picks(one_match):
+    for pick_ban in one_match['picks_bans']:
+        if pick_ban['is_pick']:
+            hero_id = pick_ban['hero_id']
+            if pick_ban['team'] == 0:
+                one_match[f'radiant_pick__{hero_id}'] = 1
+            else:
+                one_match[f'dire_pick__{hero_id}'] = 1
+    return one_match
+
+def create_hero_pick_dummies(match_data_df, col_names):
+    """Consume a dataframe of matches with draft data and target label.
+    Return a new dataframe with a dummy column for each of the 232 side + hero pick combinations.
+    """
+    new_df = add_new_zero_cols(match_data_df, col_names)
+    for match in match_data_df.index:
+        row = new_df.loc[match].copy()
+        new_df.loc[match] = assign_picks(row)
+    new_df.drop(columns='picks_bans', inplace=True)
+    return new_df
