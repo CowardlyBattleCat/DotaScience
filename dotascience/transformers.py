@@ -115,15 +115,23 @@ def remove_rows_with_nulls(match_df, cols_with_nuls):
             ~dropped_nulls_match_df[col].isnull()]
     return dropped_nulls_match_df
 
-def make_hero_pick_col_names(full_hero_data_df) -> List[str]:
-    """Consume a dataframe of hero data a list of strings with hero pick
-    columns for each side.
+def make_hero_pick_ban_col_names(full_hero_data_df,
+                                 picks_bans='both') -> List[str]:
+    """Consume a dataframe of hero data and string 'picks', 'bans', or 'both'.
+    Return a list of strings with specified pick/ban hero columns for each side.
     """
+    if picks_bans == 'both':
+        types = ['pick', 'ban']
+    elif picks_bans == 'picks':
+        types = ['pick']
+    elif picks_bans == 'bans':
+        types = ['ban']
     hero_ids = list(full_hero_data_df.index.values)
-    hero_pick_col_names = []
+    hero_pick_ban_col_names = []
     sides = ['radiant', 'dire']
-    for side in sides:
-        for hero_id in hero_ids:
-            side_hero_pick = f'{side}_pick__{hero_id}'
-            hero_pick_col_names.append(side_hero_pick)
-    return hero_pick_col_names
+    for type in types:
+        for side in sides:
+            for hero_id in hero_ids:
+                side_hero_choice = f'{side}_{type}__{hero_id}'
+                hero_pick_ban_col_names.append(side_hero_choice)
+    return hero_pick_ban_col_names
