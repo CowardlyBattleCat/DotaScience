@@ -38,7 +38,9 @@ def filter_by_patch(bulk_match_data: List[Dict],
 
 # Functions for use with Pandas objects
 def make_unique_list(column):
-    """Return a list of unique levels present in lists from a given column."""
+    """Return a list of unique levels present in lists from a given column.
+    Called by make_list_dummies.
+    """
     unique_levels=[]
     for item in column:
         if type(item)==list:
@@ -52,6 +54,7 @@ def is_level_in_col(column, level):
     """For a single row:
     Return 1 if the level is present in the column.
     Return 0 if the level is not present in the column.
+    Called by make_list_dummies.
     """
     if type(column) != list:
         return 0
@@ -61,7 +64,9 @@ def is_level_in_col(column, level):
         return 0
 
 def clean_df(df, column: str):
-    """Drop original column from df with newly created dummy columns."""
+    """Drop original column from df with newly created dummy columns.
+    Called by make_list_dummies.
+    """
     return df.drop(labels=column, axis=1)
 
 def make_list_dummies(df, column: str):
