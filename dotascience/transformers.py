@@ -97,3 +97,10 @@ def merge_hero_dummies(main_df, dummy_dfs, cols_to_drop=None):
     if cols_to_drop is not None:
         builder_df.drop(columns=cols_to_drop, inplace=True)
     return builder_df
+
+def sum_rows_with_nulls(match_df):
+    """Consume a dataframe of matches and return columns with nulls and how
+    many null rows are in each column.
+    """
+    null_columns = match_df.columns[match_df.isnull().any()]
+    return match_df[null_columns].isnull().sum()
