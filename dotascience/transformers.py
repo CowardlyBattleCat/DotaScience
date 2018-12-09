@@ -117,23 +117,23 @@ def remove_rows_with_nulls(match_df, cols_with_nuls):
     return dropped_nulls_match_df
 
 def make_hero_pick_ban_col_names(full_hero_data_df,
-                                 picks_bans='both') -> List[str]:
+                                 draft_steps='both') -> List[str]:
     """Consume a dataframe of hero data and string 'picks', 'bans', or 'both'.
     Return a list of strings with specified pick/ban hero columns for each side.
     """
-    if picks_bans == 'both':
-        types = ['pick', 'ban']
-    elif picks_bans == 'picks':
-        types = ['pick']
-    elif picks_bans == 'bans':
-        types = ['ban']
+    if draft_steps == 'both':
+        steps = ['pick', 'ban']
+    elif draft_steps == 'picks':
+        steps = ['pick']
+    elif draft_steps == 'bans':
+        steps = ['ban']
     hero_ids = list(full_hero_data_df.index.values)
     hero_pick_ban_col_names = []
     sides = ['radiant', 'dire']
-    for type in types:
+    for step in steps:
         for side in sides:
             for hero_id in hero_ids:
-                side_hero_choice = f'{side}_{type}__{hero_id}'
+                side_hero_choice = f'{side}_{step}__{hero_id}'
                 hero_pick_ban_col_names.append(side_hero_choice)
     return hero_pick_ban_col_names
 
@@ -148,23 +148,50 @@ def add_new_zero_cols(match_data_df, col_names):
     extended_match_df = pd.merge(match_data_df, empty_df, left_index=True, right_index=True)
     return extended_match_df
 
-def assign_picks(one_match):
-    for pick_ban in one_match['picks_bans']:
-        if pick_ban['is_pick']:
-            hero_id = pick_ban['hero_id']
-            if pick_ban['team'] == 0:
-                one_match[f'radiant_pick__{hero_id}'] = 1
-            else:
-                one_match[f'dire_pick__{hero_id}'] = 1
+def assign_picks_bans(one_match, draft_steps):
+    """Consume one match with empty pick and/or ban columns.
+    Return match with populated columns.
+    Blocks of code repeated to avoid checking draft_steps unnecessarily.
+    """
+    if draft_steps == 'both':
+        for pick_ban in one_match['picks_bans']:
+            if pick_ban['is_pick']:
+                hero_id = pick_ban['hero_id']
+                if pick_ban['team'] == 0:
+                    one_match[f'radiant_pick__{hero_id}'] = 1
+                else:
+                    one_match[f'dire_pick__{hero_id}'] = 1
+            if pick_ban['is_pick'] == False:
+                hero_id = pick_ban['hero_id']
+                if pick_ban['team'] == 0:
+                    one_match[f'radiant_ban__{hero_id}'] = 1
+                else:
+                    one_match[f'dire_ban__{hero_id}'] = 1
+    elif draft_steps == 'picks':
+        for pick_ban in one_match['picks_bans']:
+            if pick_ban['is_pick']:
+                hero_id = pick_ban['hero_id']
+                if pick_ban['team'] == 0:
+                    one_match[f'radiant_pick__{hero_id}'] = 1
+                else:
+                    one_match[f'dire_pick__{hero_id}'] = 1
+    elif draft_steps == 'bans':
+        for pick_ban in one_match['picks_bans']:
+            if pick_ban['is_pick'] == False:
+                hero_id = pick_ban['hero_id']
+                if pick_ban['team'] == 0:
+                    one_match[f'radiant_ban__{hero_id}'] = 1
+                else:
+                    one_match[f'dire_ban__{hero_id}'] = 1
     return one_match
 
-def create_hero_pick_dummies(match_data_df, col_names):
+def create_hero_pick_ban_dummies(match_data_df, col_names, draft_steps='both'):
     """Consume a dataframe of matches with draft data and target label.
     Return a new dataframe with a dummy column for each of the 232 side + hero pick combinations.
     """
     new_df = add_new_zero_cols(match_data_df, col_names)
     for match in match_data_df.index:
         row = new_df.loc[match].copy()
-        new_df.loc[match] = assign_picks(row)
+        new_df.loc[match] = assign_picks_bans(row, draft_steps)
     new_df.drop(columns='picks_bans', inplace=True)
     return new_df
