@@ -254,7 +254,7 @@ def assign_draft_seq(one_match):
     one_match['draft_seq'] = draft_steps
     return one_match
 
-def create_draft_seq_col(match_data_df):
+def create_draft_seq_df(match_data_df):
     """Consume a dataframe of matches with columns 'radiant_win' and
     'picks_bans'. Return a new dataframe with column 'draft_seq'.
     """
@@ -264,4 +264,14 @@ def create_draft_seq_col(match_data_df):
         row = new_df.loc[match].copy()
         new_df.loc[match] = assign_draft_seq(row)
     new_df = new_df[['draft_seq']]
+    return new_df
+
+def merge_draft_seq_col(full_match_df, match_data_df):
+    """Consume full_match_df with dummy columns and match_data_df with
+    'picks_bans' column. Return a new dataframe with the draft sequence column
+    added to the full match data.
+    """
+    draft_seq_df = create_draft_seq_df(match_data_df)
+    new_df = pd.merge(left=full_match_df, right=draft_seq_df,
+                      left_index=True, right_index=True)
     return new_df
