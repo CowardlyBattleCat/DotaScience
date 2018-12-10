@@ -240,3 +240,27 @@ def create_hero_category_sum_cols(match_data_df, hero_data_df, col_names):
     new_df = add_new_zero_cols(match_data_df, col_names)
     new_df = assign_sums(new_df, hero_data_df)
     return new_df
+
+# Creating a draft sequence column
+def assign_draft_seq(one_match):
+    """Consume one match and return the match with a list of 22 tuples
+    ('is_pick', 'hero_id', 'team', 'order') in the 'draft_seq' column.
+    """
+    draft_steps = []
+    for pick_ban in one_match['picks_bans']:
+        step = (pick_ban['is_pick'], pick_ban['hero_id'], pick_ban['team'], pick_ban['order'])
+        draft_steps.append(step)
+    one_match['draft_seq'] = draft_steps
+    return one_match
+
+def create_draft_seq_col(match_data_df):
+    """Consume a dataframe of matches with columns 'radiant_win' and 'picks_bans'.
+    Return a new dataframe with column 'draft_seq'.
+    """
+    new_df = match_data_df.copy()
+    new_df['draft_seq'] = np.empty((len(new_df), 0)).tolist()
+    for match in match_data_df.index:
+        row = new_df.loc[match].copy()
+        new_df.loc[match] = assign_draft_seq(row)
+    new_df = new_df[['draft_seq']]
+    return new_df
