@@ -38,6 +38,8 @@ def filter_by_patch(bulk_match_data: List[Dict],
 
 
 # Functions for use with Pandas objects
+
+# Functions focused on heroes data
 def make_unique_list(column):
     """Return a list of unique levels present in lists from a given column.
     Called by make_list_dummies.
@@ -99,6 +101,8 @@ def merge_hero_dummies(main_df, dummy_dfs, cols_to_drop=None):
         builder_df.drop(columns=cols_to_drop, inplace=True)
     return builder_df
 
+# Functions focused on match data
+# Cleaning match data
 def sum_rows_with_nulls(match_df):
     """Consume a dataframe of matches and return columns with nulls and how
     many null rows are in each column.
@@ -116,6 +120,21 @@ def remove_rows_with_nulls(match_df, cols_with_nuls):
             ~dropped_nulls_match_df[col].isnull()]
     return dropped_nulls_match_df
 
+# Called when adding a new section of numerical data
+def add_new_zero_cols(match_data_df, col_names):
+    """Consume a dataframe of match data and a list of column names.
+    Return a new dataframe with columns of zeroes for each col in col_names.
+    """
+    n_rows = len(match_data_df)
+    n_cols = len(col_names)
+    zero_array = np.zeros(shape=(n_rows, n_cols), dtype=int)
+    empty_df = pd.DataFrame(zero_array, index=match_data_df.index,
+                            columns=col_names)
+    extended_match_df = pd.merge(match_data_df, empty_df,
+                                 left_index=True, right_index=True)
+    return extended_match_df
+
+# Making dummy columns for picks and bans
 def make_hero_pick_ban_col_names(full_hero_data_df) -> List[str]:
     """Consume a dataframe of hero data. Return a list of strings with
     pick and ban hero columns for each side.
@@ -130,19 +149,6 @@ def make_hero_pick_ban_col_names(full_hero_data_df) -> List[str]:
                 side_hero_choice = f'{side}_{step}__{hero_id}'
                 hero_pick_ban_col_names.append(side_hero_choice)
     return hero_pick_ban_col_names
-
-def add_new_zero_cols(match_data_df, col_names):
-    """Consume a dataframe of match data and a list of column names.
-    Return a new dataframe with columns of zeroes for each col in col_names.
-    """
-    n_rows = len(match_data_df)
-    n_cols = len(col_names)
-    zero_array = np.zeros(shape=(n_rows, n_cols), dtype=int)
-    empty_df = pd.DataFrame(zero_array, index=match_data_df.index,
-                            columns=col_names)
-    extended_match_df = pd.merge(match_data_df, empty_df,
-                                 left_index=True, right_index=True)
-    return extended_match_df
 
 def assign_picks_bans(one_match):
     """Consume one match with empty pick and ban columns.
@@ -175,6 +181,7 @@ def create_hero_pick_ban_dummies(match_data_df, col_names):
     new_df.drop(columns='picks_bans', inplace=True)
     return new_df
 
+# Making sum columns for hero categories
 def make_hero_category_col_names(hero_categories: List[str]) -> List[str]:
     """Consume a list of hero categories and return a list of combinations of
     side + category column names.
