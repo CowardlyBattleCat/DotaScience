@@ -266,6 +266,7 @@ def create_draft_seq_df(match_data_df):
     new_df = new_df[['draft_seq']]
     return new_df
 
+# This function probably isn't necessary now with my new approach. 
 def merge_draft_seq_col(full_match_df, match_data_df):
     """Consume full_match_df with dummy columns and match_data_df with
     'picks_bans' column. Return a new dataframe with the draft sequence column
