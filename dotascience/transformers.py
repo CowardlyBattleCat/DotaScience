@@ -248,14 +248,15 @@ def assign_draft_seq(one_match):
     """
     draft_steps = []
     for pick_ban in one_match['picks_bans']:
-        step = (pick_ban['is_pick'], pick_ban['hero_id'], pick_ban['team'], pick_ban['order'])
+        step = (pick_ban['is_pick'], pick_ban['hero_id'],
+                pick_ban['team'], pick_ban['order'])
         draft_steps.append(step)
     one_match['draft_seq'] = draft_steps
     return one_match
 
 def create_draft_seq_col(match_data_df):
-    """Consume a dataframe of matches with columns 'radiant_win' and 'picks_bans'.
-    Return a new dataframe with column 'draft_seq'.
+    """Consume a dataframe of matches with columns 'radiant_win' and
+    'picks_bans'. Return a new dataframe with column 'draft_seq'.
     """
     new_df = match_data_df.copy()
     new_df['draft_seq'] = np.empty((len(new_df), 0)).tolist()
